@@ -28,16 +28,22 @@ for(var i = 0, l = chars.length; i < l; i++) {
 }
 
 var static_handle = static(store_dir_pre, {maxAge: 3600000 * 24 * 365 * 10});
+var max_size = 1024 * 1024 * 20; // 20mb
 
 http.createServer(function(req, res) {
     if (req.url === '/store' && req.method.toLowerCase() == 'post') {
+        var content_length = parseInt(req.headers['content-length']);
+        if(isNaN(content_length) || content_length > max_size) {
+            res.writeHead(403, {'content-type': 'text/plain'});
+            return res.end(JSON.stringify({success: false, message: 'max file size is 20mb.'}));
+        }
         // parse a file upload
         var form = new formidable.IncomingForm();
         form.parse(req, function(err, fields, files) {
             var file = files.file;
             if(!file) {
                 res.writeHead(403, {'content-type': 'text/plain'});
-                return res.end(JSON.stringify({success: false, error: 'no input file'}));
+                return res.end(JSON.stringify({success: false, message: 'no input file'}));
             }
             var name = path.basename(file.path)
               , ext = path.extname(file.name)
@@ -60,4 +66,4 @@ http.createServer(function(req, res) {
             res.end('Page not found');
         });
     }
-}).listen(3000);
+}).listen(80);
