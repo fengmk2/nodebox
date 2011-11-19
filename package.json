@@ -1,0 +1,10 @@
+{
+    "name": "nodebox"
+  , "version": "0.0.1"
+  , "description": "A file box base on nodejs."
+  , "main": "app.js"
+  , "dependencies": {
+        "formidable": "*"
+      , "connect": "*"
+    }
+}
