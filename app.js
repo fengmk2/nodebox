@@ -16,6 +16,8 @@ function mkdirSync(dir) {
 
 var store_dir_pre = __dirname + '/files';
 
+mkdirSync(store_dir_pre);
+
 for(var i = 0, l = chars.length; i < l; i++) {
     var p1 = store_dir_pre + '/' + chars[i];
     mkdirSync(p1);
@@ -25,7 +27,7 @@ for(var i = 0, l = chars.length; i < l; i++) {
     }
 }
 
-var static_handle = static(store_dir_pre);
+var static_handle = static(store_dir_pre, {maxAge: 3600000 * 24 * 365 * 10});
 
 http.createServer(function(req, res) {
     if (req.url === '/store' && req.method.toLowerCase() == 'post') {
