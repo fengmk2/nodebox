@@ -7,13 +7,11 @@ var connect = require('connect');
 var nfs = require('./common/nfs');
 var config = require('./config');
 
-fs.existsSync = fs.existsSync || path.existsSync;
-
 var tpl = fs.readFileSync('./index.html');
 
 var chars = '0123456789abcdef';
 function mkdirSync(dir) {
-  if (!fs.existsSync(dir)) {
+  if (!path.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
 }
