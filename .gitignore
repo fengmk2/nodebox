@@ -1,3 +1,5 @@
 files/*
+node_modules
+config.js
 .settings
 .project

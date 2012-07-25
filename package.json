@@ -1,10 +1,11 @@
 {
-    "name": "nodebox"
-  , "version": "0.0.1"
-  , "description": "A file box base on nodejs."
-  , "main": "app.js"
-  , "dependencies": {
-        "formidable": "*"
-      , "connect": "*"
-    }
+  "name": "nodebox", 
+  "version": "0.1.0", 
+  "description": "A file box base on nodejs.", 
+  "main": "app.js", 
+  "dependencies": {
+    "formidable": "*", 
+    "connect": "*",
+    "qiniu": ">=1.4.1"
+  }
 }
