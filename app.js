@@ -56,7 +56,8 @@ http.createServer(function(req, res) {
       res.writeHead(200, {'content-type': 'text/plain'});
       res.end(JSON.stringify({success: true, payload: {
         size: file.size,
-        url: 'http://' + req.headers.host + '/get' + store_path,
+        // url: 'http://' + req.headers.host + '/get' + store_path,
+        url: 'http://' + config.qiniu.domain + store_path,
         type: file.type
       }}));
       nfs.store(store_path, file.path, file.type);

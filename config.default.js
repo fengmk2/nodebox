@@ -15,6 +15,7 @@ module.exports = {
   qiniu: {
     ACCESS_KEY: 'YOUR_ACCESS_KEY',
     SECRET_KEY: 'YOUR_SECRET_KEY',
-    bucket: 'nodebox'
+    bucket: 'nodebox',
+    domain: 'your.domain'
   }
 };

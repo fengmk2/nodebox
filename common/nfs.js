@@ -19,7 +19,10 @@ qiniu.conf.SECRET_KEY = config.qiniu.SECRET_KEY;
 
 var _conn = new qiniu.digestauth.Client();
 var rs = new qiniu.rs.Service(_conn, config.qiniu.bucket);
-var domain = 'nfs.nodeblog.org/' + config.qiniu.bucket;
+var domain = config.qiniu.domain;
+// rs.unpublish(domain, function (res) {
+//   console.log('%s publish: %j', domain, res);
+// });
 rs.publish(domain, function (res) {
   console.log('%s publish: %j', domain, res);
 });
@@ -32,6 +35,9 @@ rs.publish(domain, function (res) {
  * @param {Function(err, data)} callback
  */
 exports.store = function (key, filename, mimeType, callback) {
+  if (key[0] === '/') {
+    key = key.substring(1);
+  }
   rs.putFile(key, mimeType, filename, function (res) {
     if (res.code !== 200) {
       var err = new Error(res.error);
@@ -44,6 +50,9 @@ exports.store = function (key, filename, mimeType, callback) {
 };
 
 exports.stat = function (key, callback) {
+  if (key[0] === '/') {
+    key = key.substring(1);
+  }
   rs.get(key, path.basename(key), function (res) {
     if (res.code !== 200) {
       var err = new Error(res.error);
