@@ -48,5 +48,8 @@ http.createServer(function handle(req, res) {
     res.end(HOME_PAGE);
     return;
   }
+  
+  res.writeHead(404);
+  res.end('Page Not Found');
 
 }).listen(config.port);
