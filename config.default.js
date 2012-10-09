@@ -12,6 +12,7 @@
 
 module.exports = {
   port: 80,
+  maxSize: 1024 * 1024 * 800, // 800mb
   qiniu: {
     ACCESS_KEY: 'YOUR_ACCESS_KEY',
     SECRET_KEY: 'YOUR_SECRET_KEY',

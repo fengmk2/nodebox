@@ -4,7 +4,8 @@
   "description": "A file box base on nodejs.", 
   "main": "app.js", 
   "dependencies": {
-    "formidable": "*", 
+    "formidable": "*",
+    "mime": ">=1.2.7",
     "qiniu": ">=1.4.1"
   }
 }
