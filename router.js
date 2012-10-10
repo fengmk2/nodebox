@@ -16,13 +16,13 @@ var home = require('./controllers/home');
 var notfound = require('./controllers/notfound');
 
 function router(req, res) {
-  if (req.url === '/send') {
+  if (req.pathname === '/send') {
     return send(req, res);
   }
-  if (req.url === '/store') {
+  if (req.pathname === '/store') {
     return store(req, res);
   }
-  if (req.url === '/') {
+  if (req.pathname === '/') {
     return home(req, res);
   }
   notfound(req, res);

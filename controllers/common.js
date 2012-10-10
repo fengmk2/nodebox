@@ -12,10 +12,10 @@
 
 var path = require('path');
 var config = require('../config');
-var homeurl = 'http://' + config.qiniu.domain;
+var homeurl = 'http://' + config.qiniu.domain + '/';
 
 exports.formatStorePath = function (name, ext) {
-  return '/' + name[0] + '/' + name[1] + '/' + name + ext;
+  return name[0] + '/' + name[1] + '/' + name + ext;
 };
 
 exports.sendResult = function (storePath, size, type, err, data, res) {

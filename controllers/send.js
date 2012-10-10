@@ -29,7 +29,9 @@ function send(req, res) {
   var name = req.query.name;
   if (!name) {
     res.writeHead(403);
-    res.end('name missing');
+    res.end(JSON.stringify({
+      error: 'name missing'
+    }));
     return;
   }
 

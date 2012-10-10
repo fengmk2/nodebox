@@ -26,7 +26,7 @@ rs.publish(domain, function (res) {
   console.log('%s publish: %j', domain, res);
 });
 
-function handleCallback(callback, errorName) {
+function convertCallback(callback, errorName) {
   return function (res) {
     if (res.code !== 200) {
       var err = new Error(res.error);
@@ -38,6 +38,10 @@ function handleCallback(callback, errorName) {
   };
 }
 
+function formatKey(k) {
+  return k[0] === '/' ? k.substring(1) : k;
+}
+
 /**
  * Store a file to nfs.
  * 
@@ -46,19 +50,13 @@ function handleCallback(callback, errorName) {
  * @param {Function(err, data)} callback
  */
 exports.store = function (key, filename, mimeType, callback) {
-  if (key[0] === '/') {
-    key = key.substring(1);
-  }
-  rs.putFile(key, mimeType, filename, handleCallback(callback, 'StoreFileError'));
+  rs.putFile(formatKey(key), mimeType, filename, convertCallback(callback, 'StoreFileError'));
 };
 
 exports.pipe = function (key, mimeType, stream, size, callback) {
-  rs.put(key, mimeType, stream, size, handleCallback(callback, 'PipeError'));
+  rs.put(formatKey(key), mimeType, stream, size, convertCallback(callback, 'PipeError'));
 };
 
 exports.stat = function (key, callback) {
-  if (key[0] === '/') {
-    key = key.substring(1);
-  }
-  rs.get(key, path.basename(key), handleCallback(callback, 'StatFileError'));
+  rs.get(formatKey(key), path.basename(key), convertCallback(callback, 'StatFileError'));
 };

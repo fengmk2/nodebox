@@ -14,6 +14,7 @@ var http = require('http');
 var path = require('path');
 var config = require('./config');
 var router = require('./router');
+var urlparse = require('url').parse;
 
 var MAX_SIZE = config.maxSize || 10 * 1024 * 1024;
 
@@ -29,6 +30,10 @@ http.createServer(function handle(req, res) {
     req.contentLength = contentLength;
   }
 
+  var urlinfo = urlparse(req.url, true);
+  req.pathname = urlinfo.pathname;
+  req.query = urlinfo.query || {};
+  
   router(req, res);
 
 }).listen(config.port);
