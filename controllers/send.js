@@ -38,7 +38,7 @@ function send(req, res) {
   var mimeType = req.headers['content-type'] || mime.lookup(name);
   var storePath = name;
   if (!req.user) {
-    var storeName = utils.md5(Date.now() + name + Math.random() + size) + path.extname(name);
+    var storeName = utils.md5(Date.now() + name + Math.random() + size);
     storePath = common.formatStorePath(storeName, path.extname(name));
   }
   
