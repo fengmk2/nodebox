@@ -15,6 +15,7 @@ var path = require('path');
 var config = require('./config');
 var router = require('./router');
 var urlparse = require('url').parse;
+var auth = require('./middleware/auth');
 
 var MAX_SIZE = config.maxSize || 10 * 1024 * 1024;
 
@@ -34,6 +35,11 @@ http.createServer(function handle(req, res) {
   req.pathname = urlinfo.pathname;
   req.query = urlinfo.query || {};
   
-  router(req, res);
+  auth({
+    user: config.user,
+    password: config.password,
+  })(req, res, function () {
+    router(req, res);
+  });
 
 }).listen(config.port);

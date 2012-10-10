@@ -36,9 +36,11 @@ function send(req, res) {
   }
 
   var mimeType = req.headers['content-type'] || mime.lookup(name);
-  var ext = path.extname(name);
-  var storeName = utils.md5(Date.now() + name + Math.random() + size);
-  var storePath = common.formatStorePath(storeName, ext);
+  var storePath = name;
+  if (!req.user) {
+    var storeName = utils.md5(Date.now() + name + Math.random() + size) + path.extname(name);
+    storePath = common.formatStorePath(storeName, path.extname(name));
+  }
   
   nfs.pipe(storePath, mimeType, req, size, function (err, data) {
     common.sendResult(storePath, size, mimeType, err, data, res);
