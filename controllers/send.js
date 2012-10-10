@@ -35,13 +35,11 @@ function send(req, res) {
     return;
   }
 
+  var mimeType = req.headers['content-type'] || mime.lookup(name);
   var ext = path.extname(name);
-  name = utils.md5(Date.now() + name + Math.random() + size);
-  var storePath = common.formatStorePath(name, ext);
-  var mimeType = req.headers['content-type'];
-  if (!mimeType) {
-    mimeType = mime.lookup(name);
-  }
+  var storeName = utils.md5(Date.now() + name + Math.random() + size);
+  var storePath = common.formatStorePath(storeName, ext);
+  
   nfs.pipe(storePath, mimeType, req, size, function (err, data) {
     common.sendResult(storePath, size, mimeType, err, data, res);
   });
