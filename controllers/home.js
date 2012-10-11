@@ -13,8 +13,10 @@
 var fs = require('fs');
 var path = require('path');
 var projectdir = path.dirname(__dirname);
+var version = require('../package.json').version;
 
-var HOME_PAGE = fs.readFileSync(path.join(projectdir, './index.html'));
+var HOME_PAGE = fs.readFileSync(path.join(projectdir, './index.html'), 'utf8');
+HOME_PAGE = HOME_PAGE.replace('{version}', version);
 
 function home(req, res) {
   res.writeHead(200, {'content-type': 'text/html'});

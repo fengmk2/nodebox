@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf8">
 <title>File Store: nodebox</title>
 </head>
+
 <body>
-	<h3 class="question">Basics</h3>
+	<h2>Upload a file</h2>
 	<p>Using our API is really easy. Just post a file to our
 		store-page: (max size: 200mb)</p>
 	<pre>&lt;form action="/store" enctype="multipart/form-data" method="post"&gt;
-    &lt;input type="file" name="file" multiple="multiple" /&gt;
+    &lt;input type="file" name="file" /&gt;
     &lt;input type="submit" /&gt;
 &lt;/form&gt;
 </pre>
 	<form action="/store" enctype="multipart/form-data" method="post">
-		<input type="file" name="file" multiple="multiple" /> <input type="submit" />
+		<input type="file" name="file" /> <input type="submit" />
 	</form>
+
 	<hr />
-	<div>
+	<div class="footer">
+		<h2>About</h2>
 		Web base on <a href="http://nodejs.org" target="_blank">nodejs</a>
 		|
-		File store power by <a href="http://qiniutek.com" target="_blank">七牛云存储</a>
+		Cloud store power by <a href="http://qiniutek.com" target="_blank">七牛云存储</a>
+		,
+		<a href="https://github.com/qiniu/nodejs-sdk" target="_blank">SDK</a>
 		|
-		<a href="https://github.com/fengmk2/nodebox" target="_blank">Github</a>
+		Open source on <a href="https://github.com/fengmk2/nodebox" target="_blank">Github</a>
+		|
+		Current version {version}
+		<h2>Author</h2>
+		<div>
+			<img src="https://secure.gravatar.com/avatar/95b9d41231617a05ced5604d242c9670?s=50" />
+			<a href="https://github.com/fengmk2" target="_blank">@fengmk2</a>
+		</div>
 	</div>
 </body>
+
 </html>

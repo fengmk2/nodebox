@@ -1,4 +1,5 @@
 files/*
+coverage.html
 node_modules
 config.js
 .settings

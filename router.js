@@ -16,12 +16,19 @@ var home = require('./controllers/home');
 var notfound = require('./controllers/notfound');
 
 function router(req, res) {
-  if (req.pathname === '/send') {
-    return send(req, res);
+  if (req.method === 'POST') {
+    if (req.pathname === '/send') {
+      return send(req, res);
+    }
+    if (req.pathname === '/store') {
+      return store(req, res);
+    }
+    res.writeHead(302, {
+      Location: '/'
+    });
+    return res.end();
   }
-  if (req.pathname === '/store') {
-    return store(req, res);
-  }
+  
   if (req.pathname === '/') {
     return home(req, res);
   }

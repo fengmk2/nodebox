@@ -2,10 +2,20 @@
   "name": "nodebox", 
   "version": "0.2.0", 
   "description": "A file box base on nodejs.", 
-  "main": "app.js", 
+  "main": "app.js",
+  "scripts": {
+    "test": "make test"
+  },
   "dependencies": {
     "formidable": "*",
+    "pause-stream": "0.0.6",
     "mime": ">=1.2.7",
     "qiniu": ">=1.4.1"
+  },
+  "devDependencies": {
+    "should": "*",
+    "mocha": "*",
+    "pedding": "*",
+    "supertest": "*"
   }
 }

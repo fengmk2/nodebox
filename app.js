@@ -19,7 +19,7 @@ var auth = require('./middleware/auth');
 
 var MAX_SIZE = config.maxSize || 10 * 1024 * 1024;
 
-http.createServer(function handle(req, res) {
+var app = http.createServer(function handle(req, res) {
   var contentLength = parseInt(req.headers['content-length'], 10) || 0;
   if (req.method.toLowerCase() === 'post') {
     var forbidden = contentLength > MAX_SIZE;
@@ -42,4 +42,9 @@ http.createServer(function handle(req, res) {
     router(req, res);
   });
 
-}).listen(config.port);
+});
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(config.port);
+}
+module.exports = app;

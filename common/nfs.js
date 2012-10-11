@@ -12,7 +12,8 @@
 
 var util = require('util');
 var config = require('../config');
-var qiniu = require('qiniu');
+// var qiniu = require('qiniu');
+var qiniu = require('../../qiniu');
 var path = require('path');
 
 qiniu.conf.ACCESS_KEY = config.qiniu.ACCESS_KEY;
@@ -51,6 +52,20 @@ function formatKey(k) {
  */
 exports.store = function (key, filename, mimeType, callback) {
   rs.putFile(formatKey(key), mimeType, filename, convertCallback(callback, 'StoreFileError'));
+};
+
+exports.upload = function (key, filename, mimeType, stream, requestCallback, callback) {
+  rs.putAuth(function (res) {
+    if (res.code !== 200) {
+      var err = new Error(res.error);
+      err.code = res.code;
+      err.name = 'PutAuthError';
+      return callback(err);
+    }
+    var token = res.data.url;
+    var req = rs.upload(token, key, mimeType, filename, stream, convertCallback(callback, 'UploadError'));
+    requestCallback(req);
+  });
 };
 
 exports.pipe = function (key, mimeType, stream, size, callback) {
