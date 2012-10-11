@@ -24,7 +24,7 @@ function store(req, res) {
   form.parse(req, function (err, fields, files) {
     var file = files.file;
     if (!file) {
-      res.writeHead(403, {'content-type': 'text/plain'});
+      res.writeHead(403, { 'content-type': 'text/plain' });
       return res.end(JSON.stringify({success: false, message: 'no input file'}));
     }
 

@@ -25,7 +25,7 @@ var common = require('./common');
  */
 
 function send(req, res) {
-  var size = req.contentLength;
+  var size = parseInt(req.headers['content-length'], 10);
   var name = req.query.name;
   if (!name) {
     res.writeHead(403);

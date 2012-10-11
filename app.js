@@ -20,15 +20,15 @@ var auth = require('./middleware/auth');
 var MAX_SIZE = config.maxSize || 10 * 1024 * 1024;
 
 http.createServer(function handle(req, res) {
-  var contentLength = parseInt(req.headers['content-length'], 10);
+  var contentLength = parseInt(req.headers['content-length'], 10) || 0;
   if (req.method.toLowerCase() === 'post') {
-    if (isNaN(contentLength) || contentLength > MAX_SIZE) {
-      res.writeHead(403, {'content-type': 'text/plain'});
+    var forbidden = contentLength > MAX_SIZE;
+    if (forbidden) {
+      res.writeHead(403, { 'content-type': 'text/plain' });
       res.end(JSON.stringify({success: false, message: 'max file size is 200mb.'}));
       req.connection.destroy();
       return;
     }
-    req.contentLength = contentLength;
   }
 
   var urlinfo = urlparse(req.url, true);
