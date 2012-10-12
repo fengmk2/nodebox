@@ -4,6 +4,8 @@
 
 A file box base on nodejs.
 
+jscoverage: [53%](http://fengmk2.github.com/coverage/nodebox.html)
+
 ## Demo
 
 http://upload.cnodejs.net

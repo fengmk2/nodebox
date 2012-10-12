@@ -12,8 +12,7 @@
 
 var util = require('util');
 var config = require('../config');
-// var qiniu = require('qiniu');
-var qiniu = require('../../qiniu');
+var qiniu = require('qiniu');
 var path = require('path');
 
 qiniu.conf.ACCESS_KEY = config.qiniu.ACCESS_KEY;
