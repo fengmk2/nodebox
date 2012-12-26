@@ -2,7 +2,7 @@ TESTS = test/*.test.js
 REPORTER = spec
 TIMEOUT = 10000
 PROJECT_DIR = $(shell pwd)
-APPNAME = nodebox
+JSCOVERAGE = ./node_modules/jscover/bin/jscover
 
 test:
 	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
@@ -11,13 +11,13 @@ test:
 		$(TESTS)
 
 cov:
-	@rm -rf ../$(APPNAME)-cov
-	@jscoverage --encoding=utf-8 --exclude=node_modules --exclude=test \
-		./ ../$(APPNAME)-cov
-	@cp -rf ./node_modules ./test ../$(APPNAME)-cov
+	@rm -rf .cov
+	@$(JSCOVERAGE) --exclude=test \
+		./ .cov
+	@cp -rf node_modules test .cov
 
 test-cov: cov
-	@$(MAKE) -C $(PROJECT_DIR)/../$(APPNAME)-cov test REPORTER=dot
-	@$(MAKE) -C $(PROJECT_DIR)/../$(APPNAME)-cov test REPORTER=html-cov > $(PROJECT_DIR)/coverage.html
+	@$(MAKE) -C .cov test REPORTER=dot
+	@$(MAKE) -C .cov test REPORTER=html-cov > coverage.html
 
 .PHONY: test-cov test cov

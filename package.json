@@ -15,6 +15,7 @@
   "devDependencies": {
     "should": "*",
     "mocha": "*",
+    "jscover": "*",
     "pedding": "*",
     "supertest": "*"
   }
