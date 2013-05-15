@@ -1,41 +1,233 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf8">
-<title>File Store: nodebox</title>
-</head>
+  <head>
+    <meta charset="utf8">
+    <title>File Store: nodebox</title>
+    <style type="text/css">
+      .edit-box {
+        border: 1px solid #ffbb03;
+        border-radius: 6px 6px 6px 6px;
+        margin:  10px 0 10px 0;
+        padding: 20px;
+        width: 300px
+      }
+    </style>
+  </head>
 
 <body>
-	<h2>Upload a file</h2>
-	<p>Using our API is really easy. Just post a file to our
-		store-page: (max size: 200mb)</p>
-	<pre>&lt;form action="/store" enctype="multipart/form-data" method="post"&gt;
+  <h2>Upload a file</h2>
+  <p>Using our API is really easy. Just post a file to our
+    store-page: (max size: 200mb)</p>
+  <pre>&lt;form action="/store" enctype="multipart/form-data" method="post"&gt;
     &lt;input type="file" name="file" /&gt;
     &lt;input type="submit" /&gt;
 &lt;/form&gt;
 </pre>
-	<form action="/store" enctype="multipart/form-data" method="post">
-		<input type="file" name="file" /> <input type="submit" />
-	</form>
+  <form action="/store" enctype="multipart/form-data" method="post">
+    <input type="file" name="file" /> <input type="submit" />
+  </form>
 
-	<hr />
-	<div class="footer">
-		<h2>About</h2>
-		Web base on <a href="http://nodejs.org" target="_blank">nodejs</a>
-		|
-		Cloud store power by <a href="http://qiniutek.com" target="_blank">七牛云存储</a>
-		,
-		<a href="https://github.com/qiniu/nodejs-sdk" target="_blank">SDK</a>
-		|
-		Open source on <a href="https://github.com/fengmk2/nodebox" target="_blank">Github</a>
-		|
-		Current version {version}
-		<h2>Author</h2>
-		<div>
-			<img src="https://secure.gravatar.com/avatar/95b9d41231617a05ced5604d242c9670?s=50" />
-			<a href="https://github.com/fengmk2" target="_blank">@fengmk2</a>
-		</div>
-	</div>
+  <div id="file-box" class="edit-box" contenteditable="false">
+    Paste file here (only test on Chrome)
+  </div>
+
+  <div id="preview" style="display:none">
+    <img id="image" />
+    <br/>
+    <button id="upload-btn">Upload Image</button> 
+  </div>
+  <p id="result"></p>
+
+  <a href="http://codebits.glennjones.net/editing/getclipboarddata.htm" 
+    target="_blank">@see: onPaste clipboardData support</a>
+
+  <hr />
+  <div class="footer">
+    <h2>About</h2>
+    Web base on <a href="http://nodejs.org" target="_blank">nodejs</a>
+    |
+    Cloud store power by <a href="http://qiniutek.com" target="_blank">七牛云存储</a>
+    ,
+    <a href="https://github.com/qiniu/nodejs-sdk" target="_blank">SDK</a>
+    |
+    Open source on <a href="https://github.com/fengmk2/nodebox" target="_blank">Github</a>
+    |
+    Current version {version}
+    <h2>Author</h2>
+    <div>
+      <img src="http://tp1.sinaimg.cn/1640328892/50/5656773936/1" />
+      <a href="https://github.com/fengmk2" target="_blank">@fengmk2</a>
+    </div>
+  </div>
+
+<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+<script>
+function _get_clipboard_file(e, callback) {
+  var f = null;
+  var items = e.clipboardData && e.clipboardData.items || [];
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    if (item.kind === 'file') {
+      f = item.getAsFile();
+      break;
+    }
+  }
+  if (f) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      callback(f, event.target.result);
+    };
+    reader.readAsDataURL(f);
+  } else {
+    callback();
+  }
+}
+
+function _init_image_preview(dataURL) {
+  var preview = document.getElementById('preview');
+  preview.style.display = "";
+  document.getElementById('image').src = dataURL;
+}
+
+window.addEventListener('load', function (e) {
+  var node = document.getElementById('file-box');
+  node.onpaste = function (e) {
+    _get_clipboard_file(e, function (file, dataURL) {
+      if (!file) {
+        return;
+      }
+      if (file.type.indexOf('image') >= 0) {
+        window._pasteFile = file;
+        _init_image_preview(dataURL);
+      }
+    });
+  };
+
+  var upload = document.getElementById('upload-btn');
+  upload.addEventListener('click', function (e) {
+    Nodebox.upload({}, window._pasteFile, function (err, result) {
+      document.getElementById('result').innerHTML = JSON.stringify(result);
+      document.getElementById('preview').style.display = 'none';
+    });
+  });
+});
+
+function getChromeVersion() {
+  var m = /Chrome\/(\d+)/i.exec(navigator.userAgent);
+  if (m) {
+    return m[1];
+  }
+  return;
+}
+
+function buildBlob(parts) {
+  var blob = null;
+  var version = parseInt(getChromeVersion() || 0, 10);
+  // https://developer.mozilla.org/en/DOM/Blob
+  // Chrome 20+ support Blob() constructor
+  if (version >= 20) {
+    blob = new Blob(parts);
+  } else {
+    if (typeof BlobBuilder === 'undefined') {
+      var BlobBuilder = window.WebKitBlobBuilder;
+    }
+    var bb = new BlobBuilder();
+    for (var i = 0; i < parts.length; i++) {
+      bb.append(parts[i]);
+    }
+    blob = bb.getBlob();
+  }
+  return blob;
+}
+
+function build_upload_params(data, pic) {
+  pic.keyname = pic.keyname || 'file';
+  var boundary = '----multipartformboundary' + Date.now();
+  var dashdash = '--';
+  var crlf = '\r\n';
+
+  /* Build RFC2388 string. */
+  var builder = '';
+
+  builder += dashdash;
+  builder += boundary;
+  builder += crlf;
+  
+  for (var key in data) {
+    var value = encodeURIComponent(data[key]);
+    data[key] = value;
+  }
+  for (var key in data) {
+    /* Generate headers. key */            
+    builder += 'Content-Disposition: form-data; name="' + key + '"';
+    builder += crlf;
+    builder += crlf; 
+     /* Append form data. */
+    builder += data[key];
+    builder += crlf;
+    
+    /* Write boundary. */
+    builder += dashdash;
+    builder += boundary;
+    builder += crlf;
+  }
+  /* Generate headers. [PIC] */            
+  builder += 'Content-Disposition: form-data; name="' + pic.keyname + '"';
+  if (pic.fileName || pic.name) {
+    // builder += '; filename="' + url_encode(pic.fileName) + '"';
+    builder += '; filename="' + (pic.fileName || pic.name) + '"';
+  }
+  builder += crlf;
+
+  builder += 'Content-Type: '+ (pic.fileType || pic.type);
+  builder += crlf;
+  builder += crlf;
+  var parts = [];
+  parts.push(builder);
+  parts.push(pic);
+  
+  builder = crlf;
+  /* Mark end of the request.*/ 
+  builder += dashdash;
+  builder += boundary;
+  builder += dashdash;
+  builder += crlf;
+  parts.push(builder);
+
+  var blob = buildBlob(parts);
+  blob.contentType = 'multipart/form-data; boundary=' + boundary;
+  return blob;
+}
+
+var Nodebox = {
+  upload: function (data, pic, callback) {
+    var url = '/store';
+    pic.keyname = 'file';
+    var blob = build_upload_params(data, pic);
+    $.ajax({
+      url: url,
+      data: blob,
+      type: 'post',
+      dataType: 'json',
+      contentType: blob.contentType,
+      processData: false,
+      success: function (result) {
+        var error = null;
+        var info = null;
+        if (result.success) {
+          info = result.payload;
+        } else {
+          error = new Error(JSON.stringify(result));
+        }
+        callback(error, info);
+      },
+      error: function (xhr, status, err) {
+        callback(err);
+      }
+    });
+  }
+};
+</script>
+
 </body>
-
 </html>
