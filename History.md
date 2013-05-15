@@ -1,4 +1,17 @@
 
+0.3.0 / 2013-05-15 
+==================
+
+  * support patse
+  * use blanket instead of jscover
+  * add auth test
+  * fixed jscover
+  * dont require package.json
+  * use qiniu
+  * support stream uploading
+  * support chunks
+  * fixed ext repeat on /send
+
 0.2.0 / 2012-10-10 
 ==================
 
