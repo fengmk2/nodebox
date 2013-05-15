@@ -36,8 +36,12 @@
     <br/>
     <button id="upload-btn">Upload Image</button> 
   </div>
-  <p id="result"></p>
-
+  <p id="result" style="display:none">
+    size: <span id="result-size"></span> bytes,
+    type: <span id="result-type"></span>,
+    url: 
+    <input type="test" id="result-url" value="" style="width: 400px">
+  </p>
   <a href="http://codebits.glennjones.net/editing/getclipboarddata.htm" 
     target="_blank">@see: onPaste clipboardData support</a>
 
@@ -84,9 +88,9 @@ function _get_clipboard_file(e, callback) {
 }
 
 function _init_image_preview(dataURL) {
-  var preview = document.getElementById('preview');
-  preview.style.display = "";
   document.getElementById('image').src = dataURL;
+  $('#result').hide();
+  $('#preview').show();
 }
 
 window.addEventListener('load', function (e) {
@@ -106,8 +110,13 @@ window.addEventListener('load', function (e) {
   var upload = document.getElementById('upload-btn');
   upload.addEventListener('click', function (e) {
     Nodebox.upload({}, window._pasteFile, function (err, result) {
-      document.getElementById('result').innerHTML = JSON.stringify(result);
-      document.getElementById('preview').style.display = 'none';
+      if (result) {
+        $('#result').show();
+        $('#result-size').html(result.size);
+        $('#result-type').html(result.type);
+        $('#result-url').val(result.url);
+        $('#preview').hide();
+      }
     });
   });
 });
