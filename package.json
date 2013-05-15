@@ -4,7 +4,16 @@
   "description": "A file box base on nodejs.", 
   "main": "app.js",
   "scripts": {
-    "test": "make test"
+    "test": "make test-all",
+    "blanket": { 
+      "pattern": "//^((?!(node_modules|test)).)*$/",
+      "data-cover-flags": {
+        "debug": false
+      }
+    },
+    "travis-cov": {
+      "threshold": 50
+    }
   },
   "dependencies": {
     "formidable": "*",
@@ -15,7 +24,8 @@
   "devDependencies": {
     "should": "*",
     "mocha": "*",
-    "jscover": "*",
+    "travis-cov": "*",
+    "blanket": "*",
     "pedding": "*",
     "supertest": "*"
   }
