@@ -46,6 +46,12 @@
     target="_blank">@see: onPaste clipboardData support</a>
 
   <hr />
+
+  <h2>Camera</h2>
+  <div id="camera"></div>
+  <button id="shoot-btn">Shoot!</button> 
+  <hr />
+
   <div class="footer">
     <h2>About</h2>
     Web base on <a href="http://nodejs.org" target="_blank">nodejs</a>
@@ -65,7 +71,10 @@
   </div>
 
 <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+<script src="http://nfs.nodeblog.org/4/1/41eaf3fef2586b784b257a1998aa40f6.js"></script>
 <script>
+// https://raw.github.com/pazguille/camera-action/master/standalone/camera-action.js
+
 function _get_clipboard_file(e, callback) {
   var f = null;
   var items = e.clipboardData && e.clipboardData.items || [];
@@ -101,15 +110,19 @@ window.addEventListener('load', function (e) {
         return;
       }
       if (file.type.indexOf('image') >= 0) {
+        file.name = 'nodebox.png';
         window._pasteFile = file;
         _init_image_preview(dataURL);
       }
     });
   };
 
-  var upload = document.getElementById('upload-btn');
-  upload.addEventListener('click', function (e) {
+  var $btn = $('#upload-btn');
+  $btn.click(function (e) {
+    var html = $btn.html();
+    $btn.html('uploading...').attr('disabled', true);
     Nodebox.upload({}, window._pasteFile, function (err, result) {
+      $btn.html(html).removeAttr('disabled');
       if (result) {
         $('#result').show();
         $('#result-size').html(result.size);
@@ -236,6 +249,63 @@ var Nodebox = {
     });
   }
 };
+
+/**
+ * 将符合字节流的string转化成Blob对象
+ * 
+ * @param {String} data
+ * @return {Blob} 
+ * @api public
+ */
+function binaryToBlob(data) {
+  var arr = new Uint8Array(data.length);
+  for (var i = 0, l = data.length; i < l; i++) {
+    arr[i] = data.charCodeAt(i);
+  }
+  // Chrome 21+ support ArrayBufferView
+  var buffer = arr;
+  var version = parseInt(getChromeVersion() || 0, 10);
+  if (version < 21) {
+    buffer = arr.buffer;
+  }
+  return buildBlob([buffer]);
+};
+
+/**
+ * 将dataUrl转化成Blob对象
+ * 
+ * @param {String} dataurl
+ * @return {Blob} 
+ * @api public
+ */
+function dataUrlToBlob(dataurl) {
+  // data:image/jpeg;base64,xxxxxx
+  var datas = dataurl.split(',', 2);
+    var blob = binaryToBlob(atob(datas[1]));
+  blob.fileType = datas[0].split(';')[0].split(':')[1];
+  blob.name = blob.fileName = 'pic.' + blob.fileType.split('/')[1];
+  return blob;
+};
+
+// Camera
+var container = document.querySelector('#camera');
+var options = {
+  width: 320,
+  height: 240,
+};
+var camera = new Camera(container, options);
+camera.on('photo', function (dataURL) {
+  var file = dataUrlToBlob(dataURL)
+  // file.name = 'camera.png';
+  window._pasteFile = file;
+  _init_image_preview(dataURL);
+});
+
+camera.action();
+
+$('#shoot-btn').click(function () {
+  camera.takePhoto();
+});
 </script>
 
 </body>
