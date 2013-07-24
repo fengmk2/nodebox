@@ -304,7 +304,10 @@ camera.on('photo', function (dataURL) {
 camera.action();
 
 $('#shoot-btn').click(function () {
-  camera.takePhoto();
+  camera.takePhoto({
+    width: options.width * 2,
+    height: options.height * 2
+  });
 });
 </script>
 
